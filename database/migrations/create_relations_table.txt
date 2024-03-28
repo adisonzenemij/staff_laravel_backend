@@ -1,0 +1,83 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('relations', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+            # Habilitar valores negativos y positivos
+            $table->bigInteger('az_identifier')->primary();
+            # Habilitar unicamente valores positivos
+            $table->bigInteger('az_identifier')->unsigned()->primary();
+            # Habilitar unicamente valores positivos
+            $table->unsignedBigInteger('az_identifier')->primary();
+
+            # Construir llaves foraneas entre tablas
+            $table->foreignId('tg_role_data')
+                ->constrained('tg_roles_datas', 'az_identifier')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->foreignId('sy_authentication')
+                ->constrained('sy_authentications', 'az_identifier')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete()
+
+            $table->foreignId('sy_session_time')
+                ->constrained('sy_sessions_times', 'az_identifier')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+
+            # Construir llaves foraneas entre tablas
+            $table->foreignId('tg_role_data')
+                ->constrained('tg_roles_datas', 'az_identifier')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignId('sy_authentication')
+                ->constrained('sy_authentications', 'az_identifier')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+            $table->foreignId('sy_session_time')
+                ->constrained('sy_sessions_times', 'az_identifier')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+
+
+            # Habilitar valores negativos y positivos
+            $table->unsignedbigInteger('tg_role_data');
+            $table->unsignedbigInteger('sy_authentication');
+            $table->unsignedbigInteger('sy_session_time');
+
+            # Habilitar unicamente valores positivos
+            $table->bigInteger('tg_role_data')->unsigned();
+            $table->bigInteger('sy_authentication')->unsigned();
+            $table->bigInteger('sy_session_time')->unsigned();
+
+            # Construir llaves foraneas entre tablas
+            $table->foreign('tg_role_data')->references('az_identifier')->on('tg_roles_datas');
+            $table->foreign('sy_authentication')->references('az_identifier')->on('sy_authentications');
+            $table->foreign('sy_session_time')->references('az_identifier')->on('sy_sessions_times');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('relations');
+    }
+};
